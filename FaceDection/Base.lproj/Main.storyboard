@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Aar-lP-KaY">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Face Detection View Controller-->
+        <scene sceneID="tR7-cA-c2e">
+            <objects>
+                <viewController id="Aar-lP-KaY" customClass="FaceDetectionViewController" customModule="FaceLasers" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="U9Y-eo-qQq">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9SK-4K-rvp" customClass="FaceView" customModule="FaceLasers" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Czg-41-0ht" customClass="LaserView" customModule="FaceLasers" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <gestureRecognizers/>
+                            </view>
+                            <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a1G-aU-0il">
+                                <rect key="frame" x="142" y="626" width="91" height="41"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Tlw-5G-CBH">
+                                    <rect key="frame" x="0.0" y="0.0" width="91" height="41"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Face" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oCN-6N-WUE">
+                                            <rect key="frame" x="20" y="10" width="51" height="21"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="21" id="a6M-8q-J3F"/>
+                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="51" id="neo-xZ-2Kg"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" name="rw-light"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                            <real key="value" value="0.0"/>
+                                        </userDefinedRuntimeAttribute>
+                                    </userDefinedRuntimeAttributes>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="91" id="2hu-rB-kvE"/>
+                                    <constraint firstAttribute="height" constant="41" id="AmK-xR-oLl"/>
+                                    <constraint firstItem="oCN-6N-WUE" firstAttribute="centerY" secondItem="a1G-aU-0il" secondAttribute="centerY" id="F7Y-nX-FgB"/>
+                                    <constraint firstItem="oCN-6N-WUE" firstAttribute="centerX" secondItem="a1G-aU-0il" secondAttribute="centerX" id="YK5-Aa-Puw"/>
+                                </constraints>
+                                <blurEffect style="light"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="13"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </visualEffectView>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstAttribute="top" secondItem="Czg-41-0ht" secondAttribute="top" id="6P8-QH-Bp7"/>
+                            <constraint firstItem="9SK-4K-rvp" firstAttribute="centerX" secondItem="Czg-41-0ht" secondAttribute="centerX" id="8Hs-HN-vkI"/>
+                            <constraint firstItem="Czg-41-0ht" firstAttribute="leading" secondItem="U9Y-eo-qQq" secondAttribute="leading" id="Adn-Pn-zBD"/>
+                            <constraint firstItem="9SK-4K-rvp" firstAttribute="height" secondItem="Czg-41-0ht" secondAttribute="height" id="DhD-FR-azP"/>
+                            <constraint firstAttribute="bottom" secondItem="Czg-41-0ht" secondAttribute="bottom" id="Kdp-kw-APR"/>
+                            <constraint firstItem="5E3-3m-hrQ" firstAttribute="bottom" secondItem="a1G-aU-0il" secondAttribute="bottom" id="V5A-MX-mnW"/>
+                            <constraint firstAttribute="trailing" secondItem="Czg-41-0ht" secondAttribute="trailing" id="m0J-Yv-NzC"/>
+                            <constraint firstItem="9SK-4K-rvp" firstAttribute="width" secondItem="Czg-41-0ht" secondAttribute="width" id="mzT-Za-lqb"/>
+                            <constraint firstItem="a1G-aU-0il" firstAttribute="centerX" secondItem="U9Y-eo-qQq" secondAttribute="centerXWithinMargins" id="uj3-C2-6Bl"/>
+                            <constraint firstItem="9SK-4K-rvp" firstAttribute="centerY" secondItem="Czg-41-0ht" secondAttribute="centerY" id="xTj-gd-VcT"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="5E3-3m-hrQ"/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="Gax-pf-er4" appends="YES" id="Y9h-Ee-WNx"/>
+                        </connections>
+                    </view>
+                    <connections>
+                        <outlet property="faceLaserLabel" destination="oCN-6N-WUE" id="dZC-EB-n8C"/>
+                        <outlet property="faceView" destination="9SK-4K-rvp" id="huL-hY-fKf"/>
+                        <outlet property="laserView" destination="Czg-41-0ht" id="6HC-Ra-hzM"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lhd-pc-gnY" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="Gax-pf-er4">
+                    <connections>
+                        <action selector="handleTap:" destination="Aar-lP-KaY" id="rLU-al-k4b"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="-234.40000000000001" y="160.56971514242881"/>
+        </scene>
+    </scenes>
+    <resources>
+        <namedColor name="rw-light">
+            <color red="0.94901960784313721" green="0.96470588235294119" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
+</document>
