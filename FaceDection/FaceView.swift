@@ -59,26 +59,26 @@ class FaceView: UIView {
   }
   
   override func draw(_ rect: CGRect) {
-    // 1
+    // 1. Get the current graphics context.
     guard let context = UIGraphicsGetCurrentContext() else {
       return
     }
 
-    // 2
+    // 2. Push the current graphics state onto the stack.
     context.saveGState()
 
-    // 3
+    // 3. Restore the graphics state when this method exits.
     defer {
       context.restoreGState()
     }
 
-    // 4
+    // 4. Add a path describing the bounding box to the context.
     context.addRect(boundingBox)
 
-    // 5
+    // 5. Set the color to red.
     UIColor.red.setStroke()
 
-    // 6
+    // 6. Draw the actual path described in step four.
     context.strokePath()
 
     // 1

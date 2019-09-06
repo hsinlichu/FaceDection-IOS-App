@@ -31,7 +31,7 @@ import UIKit
 import Vision
 
 class FaceDetectionViewController: UIViewController {
-  var sequenceHandler = VNSequenceRequestHandler()
+  var sequenceHandler = VNSequenceRequestHandler() // defines the request handler that'll be feeding images to from the camera feed.
 
   @IBOutlet var faceView: FaceView!
   @IBOutlet var laserView: LaserView!
@@ -124,15 +124,15 @@ extension FaceDetectionViewController {
 
 extension FaceDetectionViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
   func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-    // 1
+    // 1. Get the image buffer from the passed in sample buffer.
     guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
       return
     }
 
-    // 2
+    // 2. Create a face detection request to detect face bounding boxes and pass the results to a completion handler.
     let detectFaceRequest = VNDetectFaceLandmarksRequest(completionHandler: detectedFace)
 
-    // 3
+    // 3. Use sequence request handler to perform face detection request on the image.
     do {
       try sequenceHandler.perform(
         [detectFaceRequest],
@@ -292,16 +292,16 @@ extension FaceDetectionViewController {
   }
 
   func detectedFace(request: VNRequest, error: Error?) {
-    // 1
+    // 1. Extract the first result from the array of face observation results.
     guard
       let results = request.results as? [VNFaceObservation],
       let result = results.first
       else {
-        // 2
+        // 2. Clear the FaceView if something goes wrong or no face is detected.
         faceView.clear()
         return
     }
-
+    // 3. Set the bounding box to draw in the FaceView after converting it from the coordinates in the VNFaceObservation.
     if faceViewHidden {
       updateLaserView(for: result)
     } else {
