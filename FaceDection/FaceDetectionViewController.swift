@@ -37,10 +37,10 @@ class FaceDetectionViewController: UIViewController {
   @IBOutlet var laserView: LaserView!
   @IBOutlet var faceLaserLabel: UILabel!
   
-  let session = AVCaptureSession()
+  var session = AVCaptureSession()
   var previewLayer: AVCaptureVideoPreviewLayer!
   
-  let dataOutputQueue = DispatchQueue(
+  var dataOutputQueue = DispatchQueue(
     label: "video data queue",
     qos: .userInitiated,
     attributes: [],
@@ -52,6 +52,8 @@ class FaceDetectionViewController: UIViewController {
   var midY: CGFloat = 0.0
   var maxY: CGFloat = 0.0
 
+  var useFrontCamera = false
+  
   override func viewDidLoad() {
     super.viewDidLoad()
     configureCaptureSession()
@@ -64,6 +66,34 @@ class FaceDetectionViewController: UIViewController {
     
     session.startRunning()
   }
+  
+  @IBAction func switchCamera( sender: UISwitch){
+    if sender.isOn {
+      print("UISwitch is ON")
+      useFrontCamera = true
+    }
+    else {
+      print("UISwitch is OFF")
+      useFrontCamera = false
+    }
+    guard let currentCameraInput: AVCaptureInput = session.inputs.first else {
+      return
+    }
+    guard let currentCameraOutput: AVCaptureOutput = session.outputs.first else {
+      return
+    }
+    session.removeInput(currentCameraInput)
+    session.removeOutput(currentCameraOutput)
+    configureCaptureSession()
+    
+    laserView.isHidden = true
+    
+    maxX = view.bounds.maxX
+    midY = view.bounds.midY
+    maxY = view.bounds.maxY
+    session.startRunning()
+  }
+  
 }
 
 // MARK: - Gesture methods
@@ -75,9 +105,9 @@ extension FaceDetectionViewController {
     faceViewHidden = faceView.isHidden
     
     if faceViewHidden {
-      faceLaserLabel.text = "Lasers"
+      faceLaserLabel.text = "None"
     } else {
-      faceLaserLabel.text = "Face"
+      faceLaserLabel.text = "Marked"
     }
   }
 }
@@ -87,10 +117,17 @@ extension FaceDetectionViewController {
 extension FaceDetectionViewController {
   func configureCaptureSession() {
     // Define the capture device we want to use
+    var cameraPosition: AVCaptureDevice.Position!
+    if useFrontCamera {
+      cameraPosition = AVCaptureDevice.Position.front
+    }
+    else{
+      cameraPosition = AVCaptureDevice.Position.back
+    }
     guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera,
                                                for: .video,
-                                               position: .front) else {
-      fatalError("No front video camera available")
+                                               position: cameraPosition) else {
+      fatalError("No video camera available")
     }
     
     // Connect the camera to the capture session input
@@ -146,14 +183,31 @@ extension FaceDetectionViewController: AVCaptureVideoDataOutputSampleBufferDeleg
 
 extension FaceDetectionViewController {
   func convert(rect: CGRect) -> CGRect {
-    // 1
-    let origin = previewLayer.layerPointConverted(fromCaptureDevicePoint: rect.origin)
-
-    // 2
-    let size = previewLayer.layerPointConverted(fromCaptureDevicePoint: rect.size.cgPoint)
-
-    // 3
-    return CGRect(origin: origin, size: size.cgSize)
+    
+    if useFrontCamera{
+      //print("input \(rect)")
+      // 1
+      let origin = previewLayer.layerPointConverted(fromCaptureDevicePoint: rect.origin)
+      //print("origin \(origin)")
+      
+      // 2
+      let size = previewLayer.layerPointConverted(fromCaptureDevicePoint: rect.size.cgPoint)
+      //print("size \(size)")
+      // 3
+      return CGRect(origin: origin, size: size.cgSize)
+    }
+    else{
+      // 1
+      let opposite = rect.origin + rect.size.cgPoint
+      let origin = previewLayer.layerPointConverted(fromCaptureDevicePoint: rect.origin)
+      
+      // 2
+      let opp = previewLayer.layerPointConverted(fromCaptureDevicePoint: opposite)
+      
+      // 3
+      let size = (opp - origin).cgSize
+      return CGRect(origin: origin, size: size)
+    }
   }
 
   // 1
@@ -176,67 +230,70 @@ extension FaceDetectionViewController {
     return points.compactMap { landmark(point: $0, to: rect) }
   }
   
-  func updateFaceView(for result: VNFaceObservation) {
+  func updateFaceView(for results: [VNFaceObservation]) {
     defer {
       DispatchQueue.main.async {
         self.faceView.setNeedsDisplay()
       }
     }
-
-    let box = result.boundingBox
-    faceView.boundingBox = convert(rect: box)
-
-    guard let landmarks = result.landmarks else {
-      return
+    for result in results{
+      print("draw")
+      let box = result.boundingBox
+      faceView.boundingBox = convert(rect: box)
+      
+      guard let landmarks = result.landmarks else {
+        return
+      }
+      
+      if let leftEye = landmark(
+        points: landmarks.leftEye?.normalizedPoints,
+        to: result.boundingBox) {
+        faceView.leftEye = leftEye
+      }
+      
+      if let rightEye = landmark(
+        points: landmarks.rightEye?.normalizedPoints,
+        to: result.boundingBox) {
+        faceView.rightEye = rightEye
+      }
+      
+      if let leftEyebrow = landmark(
+        points: landmarks.leftEyebrow?.normalizedPoints,
+        to: result.boundingBox) {
+        faceView.leftEyebrow = leftEyebrow
+      }
+      
+      if let rightEyebrow = landmark(
+        points: landmarks.rightEyebrow?.normalizedPoints,
+        to: result.boundingBox) {
+        faceView.rightEyebrow = rightEyebrow
+      }
+      
+      if let nose = landmark(
+        points: landmarks.nose?.normalizedPoints,
+        to: result.boundingBox) {
+        faceView.nose = nose
+      }
+      
+      if let outerLips = landmark(
+        points: landmarks.outerLips?.normalizedPoints,
+        to: result.boundingBox) {
+        faceView.outerLips = outerLips
+      }
+      
+      if let innerLips = landmark(
+        points: landmarks.innerLips?.normalizedPoints,
+        to: result.boundingBox) {
+        faceView.innerLips = innerLips
+      }
+      
+      if let faceContour = landmark(
+        points: landmarks.faceContour?.normalizedPoints,
+        to: result.boundingBox) {
+        faceView.faceContour = faceContour
+      }
     }
-
-    if let leftEye = landmark(
-      points: landmarks.leftEye?.normalizedPoints,
-      to: result.boundingBox) {
-      faceView.leftEye = leftEye
-    }
-
-    if let rightEye = landmark(
-      points: landmarks.rightEye?.normalizedPoints,
-      to: result.boundingBox) {
-      faceView.rightEye = rightEye
-    }
-
-    if let leftEyebrow = landmark(
-      points: landmarks.leftEyebrow?.normalizedPoints,
-      to: result.boundingBox) {
-      faceView.leftEyebrow = leftEyebrow
-    }
-
-    if let rightEyebrow = landmark(
-      points: landmarks.rightEyebrow?.normalizedPoints,
-      to: result.boundingBox) {
-      faceView.rightEyebrow = rightEyebrow
-    }
-
-    if let nose = landmark(
-      points: landmarks.nose?.normalizedPoints,
-      to: result.boundingBox) {
-      faceView.nose = nose
-    }
-
-    if let outerLips = landmark(
-      points: landmarks.outerLips?.normalizedPoints,
-      to: result.boundingBox) {
-      faceView.outerLips = outerLips
-    }
-
-    if let innerLips = landmark(
-      points: landmarks.innerLips?.normalizedPoints,
-      to: result.boundingBox) {
-      faceView.innerLips = innerLips
-    }
-
-    if let faceContour = landmark(
-      points: landmarks.faceContour?.normalizedPoints,
-      to: result.boundingBox) {
-      faceView.faceContour = faceContour
-    }
+    
   }
 
   // 1
@@ -294,18 +351,21 @@ extension FaceDetectionViewController {
   func detectedFace(request: VNRequest, error: Error?) {
     // 1. Extract the first result from the array of face observation results.
     guard
-      let results = request.results as? [VNFaceObservation],
-      let result = results.first
+      let results = request.results as? [VNFaceObservation]
       else {
         // 2. Clear the FaceView if something goes wrong or no face is detected.
         faceView.clear()
         return
     }
+    if results.count != 0 {
+      print(results.count)
+    }
     // 3. Set the bounding box to draw in the FaceView after converting it from the coordinates in the VNFaceObservation.
     if faceViewHidden {
-      updateLaserView(for: result)
-    } else {
-      updateFaceView(for: result)
+      //updateLaserView(for: results)
+    }
+    else {
+      updateFaceView(for: results)
     }
   }
 }
