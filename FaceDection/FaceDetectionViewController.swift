@@ -29,6 +29,7 @@
 import AVFoundation
 import UIKit
 import Vision
+import SwiftSocket
 
 class FaceDetectionViewController: UIViewController {
   var sequenceHandler = VNSequenceRequestHandler() // defines the request handler that'll be feeding images to from the camera feed.
@@ -52,7 +53,11 @@ class FaceDetectionViewController: UIViewController {
   var midY: CGFloat = 0.0
   var maxY: CGFloat = 0.0
 
-  var useFrontCamera = false
+  var useFrontCamera = true
+  
+  @IBOutlet weak var status: UILabel!
+  
+  let client = TCPClient(address: "192.168.10.1", port: 80)
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -65,6 +70,15 @@ class FaceDetectionViewController: UIViewController {
     maxY = view.bounds.maxY
     
     session.startRunning()
+    
+    switch client.connect(timeout: 5) {
+    case .success:
+      print("Connect Success")
+    case .failure(let error):
+      print("Connect Fail")
+      print(error)
+    }
+    status.text = "Init"
   }
   
   @IBAction func switchCamera( sender: UISwitch){
@@ -93,7 +107,6 @@ class FaceDetectionViewController: UIViewController {
     maxY = view.bounds.maxY
     session.startRunning()
   }
-  
 }
 
 // MARK: - Gesture methods
@@ -237,8 +250,43 @@ extension FaceDetectionViewController {
       }
     }
     for result in results{
-      print("draw")
+      
       let box = result.boundingBox
+      print(box)
+      //horizontal
+      let updistance = 1 - box.maxY
+      let downdistance = box.minY
+      let leftdistance = 1 - box.maxX
+      let rightdistance = box.minX
+      //print("up \(updistance) down \(downdistance) left \(leftdistance) right \(rightdistance)")
+      
+      var command = "0"
+      var commandtext = ""
+      if updistance - downdistance > 0.05{
+        commandtext = "move down"
+        command = "1"
+      }
+      else if updistance - downdistance < -0.05{
+        commandtext = "move up"
+        command = "2"
+      }
+      else if leftdistance - rightdistance > 0.05{
+        commandtext = "move right"
+        command = "3"
+      }
+      else if leftdistance - rightdistance < -0.05{
+        commandtext = "move left"
+        command = "4"
+      }
+      else{
+        commandtext = "don't move"
+        command = "0"
+      }
+      print(commandtext)
+      print(command)
+      sendcommand(c: command)
+      //status.text = command
+      
       faceView.boundingBox = convert(rect: box)
       
       guard let landmarks = result.landmarks else {
@@ -347,7 +395,16 @@ extension FaceDetectionViewController {
       self.laserView.setNeedsDisplay()
     }
   }
-
+  func sendcommand(c :String){
+    switch client.send(string: c) {
+    case .success:
+      print("Send Success")
+    case .failure(let error):
+      print("Send Fail")
+      print(error)
+    }
+  }
+  
   func detectedFace(request: VNRequest, error: Error?) {
     // 1. Extract the first result from the array of face observation results.
     guard
@@ -358,11 +415,12 @@ extension FaceDetectionViewController {
         return
     }
     if results.count != 0 {
-      print(results.count)
+      //print(results.count)
     }
     // 3. Set the bounding box to draw in the FaceView after converting it from the coordinates in the VNFaceObservation.
     if faceViewHidden {
       //updateLaserView(for: results)
+      updateFaceView(for: results)
     }
     else {
       updateFaceView(for: results)

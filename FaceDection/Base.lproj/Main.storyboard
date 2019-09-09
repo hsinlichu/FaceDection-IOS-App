@@ -27,17 +27,25 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <subviews>
                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ygI-xh-c6u">
-                                        <rect key="frame" x="28" y="48" width="51" height="31"/>
+                                        <rect key="frame" x="30" y="50" width="51" height="31"/>
                                         <connections>
                                             <action selector="switchCameraWithSender:" destination="Aar-lP-KaY" eventType="valueChanged" id="mvw-aj-261"/>
                                         </connections>
                                     </switch>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sWb-DH-zaC">
+                                        <rect key="frame" x="303" y="50" width="42" height="21"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <gestureRecognizers/>
                                 <constraints>
-                                    <constraint firstItem="ygI-xh-c6u" firstAttribute="top" secondItem="Czg-41-0ht" secondAttribute="topMargin" constant="20" id="2hM-9m-tbv"/>
-                                    <constraint firstItem="ygI-xh-c6u" firstAttribute="leading" secondItem="Czg-41-0ht" secondAttribute="leadingMargin" constant="20" id="mYw-PY-MEk"/>
+                                    <constraint firstAttribute="trailing" secondItem="sWb-DH-zaC" secondAttribute="trailing" constant="30" id="KPg-F4-fOy"/>
+                                    <constraint firstItem="ygI-xh-c6u" firstAttribute="leading" secondItem="Czg-41-0ht" secondAttribute="leading" constant="30" id="cFM-cA-3LR"/>
+                                    <constraint firstItem="ygI-xh-c6u" firstAttribute="top" secondItem="Czg-41-0ht" secondAttribute="top" constant="50" id="fwz-hN-H9B"/>
+                                    <constraint firstItem="sWb-DH-zaC" firstAttribute="top" secondItem="Czg-41-0ht" secondAttribute="top" constant="50" id="xHc-Ck-IKs"/>
                                 </constraints>
                             </view>
                             <visualEffectView opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="a1G-aU-0il">
@@ -100,6 +108,7 @@
                         <outlet property="faceLaserLabel" destination="oCN-6N-WUE" id="dZC-EB-n8C"/>
                         <outlet property="faceView" destination="9SK-4K-rvp" id="huL-hY-fKf"/>
                         <outlet property="laserView" destination="Czg-41-0ht" id="6HC-Ra-hzM"/>
+                        <outlet property="status" destination="sWb-DH-zaC" id="Jfd-cW-Zhg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lhd-pc-gnY" userLabel="First Responder" sceneMemberID="firstResponder"/>

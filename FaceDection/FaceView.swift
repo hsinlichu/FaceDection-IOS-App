@@ -70,7 +70,6 @@ class FaceView: UIView {
     // 3. Restore the graphics state when this method exits.
     defer {
       context.restoreGState()
-      print("exit")
     }
 
     // 4. Add a path describing the bounding box to the context.
